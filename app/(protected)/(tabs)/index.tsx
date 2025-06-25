@@ -7,10 +7,15 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AuthContext } from '@/utils/authContext';
 import { useContext } from 'react';
+import { Redirect } from 'expo-router';
 
 export default function HomeScreen() {
 
   const authContext = useContext(AuthContext);
+
+  if(!authContext.isLoggedIn){
+    return <Redirect href="/login" />;
+  }
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
