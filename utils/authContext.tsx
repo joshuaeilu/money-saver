@@ -1,5 +1,6 @@
+import React from 'react';
 import { useRouter } from 'expo-router';
-import React, { createContext, PropsWithChildren, useState, } from 'react';
+import  { createContext, PropsWithChildren, useState, } from 'react';
 
 type AuthState = {
     isLoggedIn: boolean;
@@ -23,7 +24,7 @@ export const AuthContext = createContext<AuthState>({
     addUserInfo: (info: UserInfo) => {},
     getUserInfo: () => { return { username: '', email: '', phoneNumber: '', password: '' }; },
 });
-
+export const router = useRouter();
 export function AuthProvider({children}: PropsWithChildren){
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', email: '', phoneNumber: '', password: '' });
@@ -52,8 +53,7 @@ export function AuthProvider({children}: PropsWithChildren){
 
 
 
-
-    const router = useRouter();
+;
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, login, logout, addUserInfo, getUserInfo }}>

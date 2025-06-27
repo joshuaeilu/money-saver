@@ -1,10 +1,9 @@
-
+import React from 'react';
 import { Redirect, Stack } from 'expo-router';
 import { AuthProvider, AuthContext } from '@/utils/authContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 export default function RootLayout() {
-
 
   return (
     <AuthProvider>

@@ -1,4 +1,4 @@
-import { AuthContext } from '@/utils/authContext';
+import { AuthContext, router } from '@/utils/authContext';
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
@@ -7,8 +7,6 @@ import { Button, Text, TextInput, View } from 'react-native';
 export default function SignUp(){
     const authContext = useContext(AuthContext);
     const userInfo = authContext.getUserInfo() ;
-
-    const router = useRouter();
 
     return (
         <View>
