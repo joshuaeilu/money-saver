@@ -6,7 +6,7 @@ import { Button, Text, TextInput, View } from 'react-native';
 
 export default function SignUp(){
     const authContext = useContext(AuthContext);
-    const userInfo = authContext.getUserInfo() || null;
+    const userInfo = authContext.getUserInfo() ;
 
     const router = useRouter();
 
@@ -14,7 +14,7 @@ export default function SignUp(){
         <View>
             <Text>Sign Up</Text>
 
-            <TextInput placeholder="Username" onChangeText={(e) => authContext.addUserInfo({...userInfo})} />
+            <TextInput placeholder="Username" onChangeText={(e) => authContext.addUserInfo({...userInfo, username: e})} />
             <TextInput placeholder="Email" onChangeText={(e) => authContext.addUserInfo({...userInfo, email: e})} />
             <TextInput placeholder="Password" secureTextEntry onChangeText={(e) => authContext.addUserInfo({...userInfo, password: e})} />
             <TextInput placeholder="Phone Number" keyboardType="phone-pad" onChangeText={(e) => authContext.addUserInfo({...userInfo, phoneNumber: e})} />

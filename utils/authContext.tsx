@@ -1,12 +1,12 @@
-import React, { createContext, PropsWithChildren, useState,  } from 'react';
 import { useRouter } from 'expo-router';
+import React, { createContext, PropsWithChildren, useState, } from 'react';
 
 type AuthState = {
     isLoggedIn: boolean;
     login: () => void;
     logout: () => void;
     addUserInfo: (info: UserInfo) => void;
-    getUserInfo: () => UserInfo | null;
+    getUserInfo: () => UserInfo;
 }
 
 interface UserInfo { 
@@ -21,12 +21,13 @@ export const AuthContext = createContext<AuthState>({
     login: () => {},
     logout: () => {},
     addUserInfo: (info: UserInfo) => {},
-    getUserInfo: () => null,
+    getUserInfo: () => { return { username: '', email: '', phoneNumber: '', password: '' }; },
 });
 
 export function AuthProvider({children}: PropsWithChildren){
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', email: '', phoneNumber: '', password: '' });
+
 
 
     const addUserInfo = (info: UserInfo) => {
@@ -41,6 +42,7 @@ export function AuthProvider({children}: PropsWithChildren){
     const login = () => {
         setIsLoggedIn(true);
         router.replace('/');
+
     }
     const logout = () => {
         setIsLoggedIn(false);

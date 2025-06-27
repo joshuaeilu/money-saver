@@ -1,6 +1,12 @@
 
 import { Button, Text, TextInput, View } from 'react-native';
+
+import { AuthContext} from '@/utils/authContext';
+import { useContext } from 'react';
 export default function confirmVerify() {
+    const authContext = useContext(AuthContext);
+    const userInfo = authContext.getUserInfo();
+    console.log('User Info:', userInfo);
 
     return (
 
