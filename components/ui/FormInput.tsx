@@ -6,6 +6,7 @@ interface ModernInputProps {
   value: string;
   onChangeText: (text: string) => void;
   isPassword?: boolean;
+  onBlur?: () => void;
 }
 
 export default function FormInput({
@@ -13,16 +14,14 @@ export default function FormInput({
   value,
   onChangeText,
   isPassword = false,
+  onBlur,
 }: ModernInputProps) {
   const [focused, setFocused] = useState(false);
 
   return (
     <View className="w-full mb-4">
       <TextInput
-        // className={`
-        //   w-full px-4 py-3 text-base rounded-lg border bg-white text-gray-900
-        //   ${focused ? 'border-[#89964E] shadow-md shadow-[#89964E]' : 'border-gray-300'}
-        // `}
+ 
       className={`
     w-full px-4 py-3 text-base rounded-lg border bg-white text-gray-900
     ${focused ? 'border-[#89964E] shadow-md shadow-[#89964E]' : 'border-gray-300 shadow-none'}
@@ -31,7 +30,10 @@ export default function FormInput({
         placeholderTextColor="#A3A3A3"
         secureTextEntry={isPassword}
         onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onBlur={() => {
+          setFocused(false);
+          if (onBlur) onBlur();
+        }}
         value={value}
         onChangeText={onChangeText}
       />

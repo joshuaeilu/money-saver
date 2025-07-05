@@ -15,15 +15,14 @@ export default function RootLayout() {
     return () => clearTimeout(timer); // Cleanup the timer
   }, []);
 
-  if (showIntro) {
-    return <Intro />; // Show the Intro page
-  }
+  // if (showIntro) {
+  //   return <Intro />; // Show the Intro page
+  // }
   
   return (
       <SafeAreaView style={{ flex: 1 }} >
     <AuthProvider>
-        <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
-          <Stack.Screen name="(protected)/(tabs)" />
+        <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
         </Stack>
     </AuthProvider>
       </SafeAreaView>

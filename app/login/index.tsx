@@ -18,6 +18,8 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter(); // Use router for navigation
+ 
+ 
 
   return (
     <KeyboardAvoidingView
@@ -32,25 +34,25 @@ export default function Login() {
         <View className="flex-1  items-center justify-center px-6">
           <Image
             source={require('@/assets/images/primary_logo.png')}
-            className="w-1/6 h-1/6 mb-4"
+            className="w-1/6 h-1/6 my-4"
           />
 
-        <View className="py-4" >
+          <View className="py-4" >
             <Text className="text-4xl font-bold text-black text-center mb-2">
-            Welcome Back
-          </Text>
-          <Text className="text-lg font-medium text-gray-600 text-center mb-6">
-            Log in to continue managing your savings.
-          </Text>
-        </View>
+              Welcome Back
+            </Text>
+            <Text className="text-lg font-medium text-gray-600 text-center mb-6">
+              Log in to continue managing your savings.
+            </Text>
+          </View>
 
-            <FormInput
+          <FormInput
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
             isPassword={false}
-            
-            
+
+
           />
 
           <FormInput
@@ -59,6 +61,7 @@ export default function Login() {
             onChangeText={setPassword}
             isPassword={true}
           />
+          
 
           <TouchableOpacity className="bg-[#89964E] py-3  m-4 rounded-xl mb-4 w-full">
             <Text className="text-white font-semibold text-center">Sign In</Text>
