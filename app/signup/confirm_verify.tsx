@@ -9,10 +9,8 @@ export default function confirmVerify() {
     const authContext = useContext(AuthContext);
     const userInfo = authContext.getUserInfo();
     const [code, setCode] = useState('');
-    const { optionName } = useLocalSearchParams();
 
     async function verifyEmailorSMS() {
-        if (optionName === 'email') {
             let { data, error } = await supabase.auth.verifyOtp({
                 email: userInfo.email,
                 token: code,
@@ -25,25 +23,12 @@ export default function confirmVerify() {
                 alert('Email verification successful!');
                 console.log('Email verification successful:', data);
             }
-        }
+        
 
-        // else if(optionName === 'sms'){
-        else if (optionName === 'sms') {
-            let { data, error } = await supabase.auth.verifyOtp({
-                phone: userInfo.phoneNumber,
-                token: code,
-                type: 'sms'
-            })
-            if (error) {
-                alert('Error verifying SMS: ' + error.message);
-            } else {
-                alert('SMS verification successful!');
-            }
-        }
+
     }
 
     async function resendVerificationCode() {
-        if (optionName === 'email') {
             let { data, error } = await supabase.auth.resend({
                 email: userInfo.email,
                 type: 'signup'
@@ -54,17 +39,7 @@ export default function confirmVerify() {
             } else {
                 console.log('Verification code resent successfully:');
             }
-        } else if (optionName === 'sms') {
-            const { error } = await supabase.auth.resend({
-                type: 'phone_change',
-                phone: userInfo.phoneNumber,
-            })
-            if (error) {
-                alert('Error verifying SMS: ' + error.message);
-            } else {
-                alert('SMS verification successful!');
-            }
-        }}
+        } 
 
 
 

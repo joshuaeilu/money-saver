@@ -1,7 +1,7 @@
-const { getDefaultConfig } = require('@expo/metro-config');
-const defaultConfig = getDefaultConfig(__dirname);
+const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require('nativewind/metro');
+const { wrapWithReanimatedMetroConfig } = require('react-native-reanimated/metro-config');
+ 
+const config = getDefaultConfig(__dirname)
 
-defaultConfig.resolver.sourceExts.push('cjs');
-defaultConfig.resolver.unstable_enablePackageExports = false;
-
-module.exports = defaultConfig;
+module.exports = wrapWithReanimatedMetroConfig(withNativeWind(config, { input: './global.css' }))
