@@ -9,10 +9,12 @@
   return score; // score is between 0 and 5
 };
 
-const getStrengthColor = (score: number) => {
-  if (score <= 2) return 'bg-red-500';
-  if (score === 3) return 'bg-yellow-500';
-  if (score >= 4) return 'bg-[#89964E]'; // Your theme color
-};
+ function getStrengthColor(score: number) {
+  if (score <= 1) return '#FF0000'; // red
+  if (score === 2) return '#FFA500'; // orange
+  if (score === 3) return '#FFFF00'; // yellow
+  if (score === 4) return '#89964E'; // green
+  return '#006400'; // dark green
+}
 
 export { getPasswordStrength, getStrengthColor };

@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import  { createContext, PropsWithChildren, useState, } from 'react';
+import { createContext, PropsWithChildren, useState, } from 'react';
 
 type AuthState = {
     isLoggedIn: boolean;
@@ -42,7 +42,7 @@ export function AuthProvider({children}: PropsWithChildren){
 
     const login = () => {
         setIsLoggedIn(true);
-        router.replace('/');
+        router.replace('/'); // Navigate to the home page after login
 
     }
     const logout = () => {

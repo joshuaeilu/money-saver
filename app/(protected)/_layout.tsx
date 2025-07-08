@@ -7,9 +7,9 @@ export default function ProtectedLayout(){
 
     const authContext = useContext(AuthContext);
 
-    if (!authContext.isLoggedIn) {
-        return <Redirect href="/login" />;
-    }
+    // if (!authContext.isLoggedIn) {
+    //     return <Redirect href="/login" />;
+    // }
 
     return (
         <Stack>

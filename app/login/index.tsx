@@ -1,23 +1,40 @@
-import {
-  Button,
-  Text,
-  KeyboardAvoidingView,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import { View, Image } from 'react-native';
 import { AuthContext } from '@/utils/authContext';
-import { useContext, useState } from 'react';
 import { useRouter } from 'expo-router'; // Import useRouter for navigation
+import { useContext, useState } from 'react';
+import {
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
 import FormInput from '@/components/ui/FormInput'; // Import FormInput component
+import { loginUser } from '@/utils/authFunctions';
+import Toast from 'react-native-toast-message'; // Import Toast for notifications
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter(); // Use router for navigation
+
+  const authContext = useContext(AuthContext); // Access AuthContext
+
+  async function handleLogin() {
+    const user = await loginUser(email, password);
+    if (user) {
+      authContext.login(); // Update the context to reflect the user is logged in
+    } else {
+      // Show an error message
+      Toast.show({
+        type: 'error',
+        text1: 'Login failed',
+        text2: 'Please check your credentials and try again.',
+        position: 'bottom'
+      });
+    }
+  }
  
  
 
@@ -54,6 +71,7 @@ export default function Login() {
 
 
           />
+          <Toast />
 
           <FormInput
             placeholder="Password"
@@ -63,7 +81,7 @@ export default function Login() {
           />
           
 
-          <TouchableOpacity className="bg-[#89964E] py-3  m-4 rounded-xl mb-4 w-full">
+          <TouchableOpacity className="bg-[#89964E] py-3  m-4 rounded-xl mb-4 w-full" onPress={handleLogin}>
             <Text className="text-white font-semibold text-center">Sign In</Text>
           </TouchableOpacity>
 

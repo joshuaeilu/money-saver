@@ -1,7 +1,7 @@
 
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import Toast from 'react-native-toast-message';
 import { AuthContext } from '@/utils/authContext';
 import { supabase } from '@/utils/supabase';
 import { useContext, useRef, useState } from 'react';
@@ -20,11 +20,20 @@ export default function confirmVerify() {
             type: 'email'
         })
         if (error) {
-            console.error('Error verifying email:', error.message);
-            alert('Error verifying email: ' + error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Verification failed',
+                text2: error.message,
+                position: 'bottom'
+            })
         } else {
-            alert('Email verification successful!');
-            console.log('Email verification successful:', data);
+            Toast.show({
+                type: 'success',
+                text1: 'Email verification successful!',
+                text2: 'You can now log in with your account.',
+                position: 'bottom'
+            });
+            authContext.addUserInfo({ username: '', email: '', phoneNumber: '', password: '' }); // Clear user info
             router.dismissTo('/login'); // Dismiss all routes and navigate to login
         }
 
@@ -38,10 +47,18 @@ export default function confirmVerify() {
             type: 'signup'
         });
         if (error) {
-            console.error('Error resending verification code:', error.message);
-            alert('Error resending verification code: ' + error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Resend failed',
+                text2: error.message,
+                position: 'bottom'
+            });
         } else {
-            console.log('Verification code resent successfully:');
+            Toast.show({
+                type: 'success',
+                text1: 'Verification code resent successfully!',
+                position: 'bottom'
+            });
         }
     }
 
@@ -66,25 +83,13 @@ export default function confirmVerify() {
 
 
 
-    //    async function handleDismissRoutesAndLogin() {
-
-
-    //         authContext.addUserInfo({ username: '', email: '', phoneNumber: '', password: '' }); // Clear user info
-    //         router.dismissTo('/login'); // Dismiss all routes
-    //     }
-
+ 
 
 
 
 
     return (
-        // <View>
-        //     <Text>Confirm Verify</Text>
-        //     <TextInput placeholder="Enter 6 digit code" keyboardType="numeric" value={code} onChangeText={setCode} />
-        //     <Button title="Confirm" onPress={() => verifyEmailorSMS()} />
-        //     <Button title="Resend Code" onPress={() => resendVerificationCode()} />
-        // </View>
-
+   
 
         <KeyboardAvoidingView
             className="flex-1 bg-white"
@@ -134,6 +139,7 @@ export default function confirmVerify() {
 
 
             </View>
+            <Toast />
 
 
 

@@ -4,9 +4,23 @@ import { AuthProvider } from '@/utils/authContext';
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFonts, Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
+
+
+ 
 export default function RootLayout() {
   const [showIntro, setShowIntro] = useState(true);
 
+   const [fontsLoaded] = useFonts({
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
+    Manrope_800ExtraBold,
+  });
+  // if (!fontsLoaded) {
+  //   return null; // or a loading spinner
+  // }
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowIntro(false);
