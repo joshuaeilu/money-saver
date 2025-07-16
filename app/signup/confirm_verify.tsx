@@ -1,11 +1,12 @@
 
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
 import { AuthContext } from '@/utils/authContext';
 import { supabase } from '@/utils/supabase';
 import { useContext, useRef, useState } from 'react';
 import { router } from 'expo-router';
+import { addToTotalAmount, addToTotalForUser } from '@/utils/dataFunctions';
+import { Feather } from '@expo/vector-icons';
 export default function confirmVerify() {
     const authContext = useContext(AuthContext);
     const userInfo = authContext.getUserInfo();
@@ -27,6 +28,8 @@ export default function confirmVerify() {
                 position: 'bottom'
             })
         } else {
+            await addToTotalForUser(0); // Reset total amount to 0
+
             Toast.show({
                 type: 'success',
                 text1: 'Email verification successful!',
@@ -100,7 +103,7 @@ export default function confirmVerify() {
 
                 {/* Email Icon */}
                 <View className="mb-6">
-                    <MaterialIcons name="email" size={90} color="#89964E" />
+                    <Feather name="mail" size={90} color="#89964E" />
                 </View>
 
 
