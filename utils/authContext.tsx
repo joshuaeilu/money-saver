@@ -26,7 +26,7 @@ export const AuthContext = createContext<AuthState>({
 export const router = useRouter();
 
 export function AuthProvider({children}: PropsWithChildren){
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', email: '', phoneNumber: '', password: '' });
 
 

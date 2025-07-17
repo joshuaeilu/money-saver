@@ -1,8 +1,9 @@
 import EditPlanModal from '@/components/ui/edit_plan_component';
+import GoalCard from '@/components/ui/GoalCard';
 import PlanCard from '@/components/ui/PlanCard';
 import TabHeaderComponent from '@/components/ui/tab_header_component';
 import { AuthContext } from '@/utils/authContext';
-import { deletePlan, fetchPlans, updatePlan, updatePlanAmounts } from '@/utils/dataFunctions';
+import { deletePlan, fetchGoals, fetchPlans, updatePlan, updatePlanAmounts } from '@/utils/dataFunctions';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Redirect, useRouter } from 'expo-router'; // Import router for navigation
@@ -23,28 +24,43 @@ export default function Layout() {
   const [plans, setPlans] = useState<any[]>([]); // State to hold plans
   const [goals, setGoals] = useState<any[]>([]); // State to hold goals
   const [showEdit, setShowEdit] = useState(false);
+  const [showEditGoal, setShowEditGoal] = useState(false);
   const [editingPlan, setEditingPlan] = useState({id: '', name: '', percentage: '', amount: '', withdraw: ''});
+  const [editingGoal, setEditingGoal] = useState({id: '', name: '', target_amount: '', current_amount: '', withdraw: ''});
   const currentPercentage = plans.reduce((acc, plan) => acc + plan.percentage, 0);
   const currentTotalAmount = plans.reduce((acc, plan) => acc + plan.amount, 0);
+  const currentGoalAmount = goals.reduce((acc, goal) => acc + goal.current_amount, 0);
 
-  // Fetch plans when the component mounts and whenever plans change
+  // Fetch plans and goals when the component mounts
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetchPlans();
+      const plansResult = await fetchPlans();
+      const goalsResult = await fetchGoals();
       
-      if (!result.success) {
+      if (!plansResult.success) {
         Toast.show({
           type: 'error',
           text1: 'Error Loading Plans',
-          text2: result.message,
+          text2: plansResult.message,
           position: 'bottom'
         });
-      } else if (result.data) {
-        setPlans(result.data);
+      } else if (plansResult.data) {
+        setPlans(plansResult.data);
+      }
+
+      if (!goalsResult.success) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error Loading Goals',
+          text2: goalsResult.message,
+          position: 'bottom'
+        });
+      } else if (goalsResult.data) {
+        setGoals(goalsResult.data);
       }
     };
     fetchData();
-  }, [plans]);
+  }, [plans, goals]);
 
 
   // Check if the user is logged in, if not redirect to login
@@ -148,7 +164,8 @@ export default function Layout() {
       {/* Conditional Rendering Based on Active Tab */}
       <ScrollView key={activeTab} className="flex-1 ">
         {/* Plans Section */}
-        {(activeTab === 'plans' && plans.length > 0) ? plans.map((plan) => (
+            {activeTab === 'plans' && (
+          (plans.length > 0) ? plans.map((plan) => (
           <PlanCard
             key={plan.id}
             title={plan.name}
@@ -162,7 +179,7 @@ export default function Layout() {
 
           />
         )) : (
-          <View className="flex-1 items-center justify-center mt-10 px-6">
+          <View className="flex-1 items-center justi`fy-center mt-10 px-6">
             <Feather name="alert-circle" size={60} color="#667039" />
             <Text
               className="text-center text-4xl text-text_strong font-manrope-bold mt-2 mb-2"
@@ -174,36 +191,58 @@ export default function Layout() {
               You currently don’t have a savings plan, create one before adding an amount to your budget.
             </Text>
           </View>
-        )}
+        ))}
 
         {/* Goals Section */}
-         {(activeTab === 'goals' && goals.length > 0) ? goals.map((goal) => (
-          <Text>Hello world</Text>
-        )) : (
-          <View className="flex-1 items-center justify-center mt-10 px-6">
-            <Feather name="alert-circle" size={60} color="#667039" />
-            <Text
-              className="text-center text-4xl text-text_strong font-manrope-bold mt-2 mb-2"
-              style={{ lineHeight: 44 }} // Adjust as needed
-            >
-              Goals?
-            </Text>
-            <Text className="text-center text-xl text-text_strong font-manrope-regular leading-snug">
-              You currently don’t have a goals plan, create one before adding an amount to your budget.
-            </Text>
-          </View>
+        {activeTab === 'goals' && (
+          (goals.length > 0) ? goals.map((goal) => (
+            <GoalCard
+              key={goal.id}
+              title={goal.name}
+              currentAmount={goal.current_amount}
+              targetAmount={goal.target_amount}
+              onOptionsPress={() => {
+                setEditingGoal(goal);
+                setShowEditGoal(true);
+              }}
+            />
+          )) : (
+            <View className="flex-1 items-center justify-center mt-10 px-6">
+              <Feather name="target" size={60} color="#667039" />
+              <Text
+                className="text-center text-4xl text-text_strong font-manrope-bold mt-2 mb-2"
+                style={{ lineHeight: 44 }} // Adjust as needed
+              >
+                Goals?
+              </Text>
+              <Text className="text-center text-xl text-text_strong font-manrope-regular leading-snug">
+                You currently don't have any goals, create one to start saving for something specific.
+              </Text>
+            </View>
+          )
         )}
+
       </ScrollView>
 
-      {/* Total Amount and Add Plan Button */}
+      {/* Total Amount and Add Plan/Goal Button */}
       <View className='flex-row items-center justify-between px-4 py-4 bg-white border-gray-200'>
-        <Text className='text-2xl font-manrope-semibold text-text_strong'>Total: ${currentTotalAmount.toString()}</Text>
+        <Text className='text-2xl font-manrope-semibold text-text_strong'>
+          Total: ${activeTab === 'plans' ? currentTotalAmount.toString() : currentGoalAmount.toString()}
+        </Text>
         <TouchableOpacity
           className='flex-row bg-brand rounded-lg px-4 py-2'
-          onPress={() => router.push({ pathname: '/add_plan', params: { currentPercentage: currentPercentage } })}
+          onPress={() => {
+            if (activeTab === 'plans') {
+              router.push({ pathname: '/add_plan', params: { currentPercentage: currentPercentage } });
+            } else {
+              router.push('/add_goal/index');
+            }
+          }}
         >
           <Feather name='plus' size={24} color="white" />
-          <Text className='text-white text-xl font-manrope-semibold'>Add Plan</Text>
+          <Text className='text-white text-xl font-manrope-semibold'>
+            Add {activeTab === 'plans' ? 'Plan' : 'Goal'}
+          </Text>
         </TouchableOpacity>
       </View>
 

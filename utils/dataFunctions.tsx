@@ -92,6 +92,87 @@ export const fetchPlans = async () => {
   return { success: true, data };
 }
 
+// Add a new goal to the database
+export const addGoal = async (name: string, targetAmount: number) => {
+  const { data, error } = await supabase
+    .from('goals')
+    .insert([
+      { name, current_amount: 0, target_amount: targetAmount }
+    ])
+    .select();
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  return { success: true, data };
+}
+
+// Delete a goal from the database
+export async function deleteGoal(goalId: string) {
+  const { error } = await supabase
+    .from('goals')
+    .delete()
+    .eq('id', goalId);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  return { success: true, message: 'Goal deleted successfully' };
+}
+
+// Update goal amounts in supabase when adding money
+export async function updateGoalAmounts(goalAmounts: { id: string; newAmount: number }[]) {
+  try {
+    await Promise.all(goalAmounts.map(async (goal) => {
+      const { data, error } = await supabase
+        .from('goals')
+        .update({ current_amount: goal.newAmount })
+        .eq('id', goal.id)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, message: error.message };
+      } else {
+        return { success: true, data };
+      }
+    })); // Wait for all updates to complete
+    return { success: true, message: 'All goal amounts updated successfully' };
+  } catch (error) {
+    return { success: false, message: 'Error updating goal amounts: ' + error };
+  }
+}
+
+// Update an existing goal in the database
+export async function updateGoal(goal: { id: string; name: string; target_amount: string; current_amount: string; withdraw: string }) {
+  const withdrawValue = goal.withdraw && !isNaN(parseFloat(goal.withdraw)) ? parseFloat(goal.withdraw) : 0;
+  const newAmount = (parseFloat(goal.current_amount) - withdrawValue).toString();
+  const { data, error } = await supabase
+    .from('goals')
+    .update({ name: goal.name, target_amount: goal.target_amount, current_amount: newAmount })
+    .eq('id', goal.id)
+    .select()
+    .single();
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  return { success: true, data };
+}
+
+// Fetch all goals from the database
+export const fetchGoals = async () => {
+  const { data, error } = await supabase
+    .from('goals')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  return { success: true, data };
+}
+
 
 
 
