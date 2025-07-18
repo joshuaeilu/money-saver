@@ -3,7 +3,7 @@ import GoalCard from '@/components/ui/GoalCard';
 import PlanCard from '@/components/ui/PlanCard';
 import TabHeaderComponent from '@/components/ui/tab_header_component';
 import { AuthContext } from '@/utils/authContext';
-import { deletePlan, fetchGoals, fetchPlans, updatePlan, updatePlanAmounts } from '@/utils/dataFunctions';
+import { deletePlan, fetchGoals, fetchPlans, updatePlan, updatePlanAmounts, updateGoalAmounts } from '@/utils/dataFunctions';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Redirect, useRouter } from 'expo-router'; // Import router for navigation
@@ -73,12 +73,20 @@ export default function Layout() {
   function calculatePlanAmounts(totalAmountToAdd: Float) {
     return plans.map(plan => ({
       id: plan.id,
+      name: plan.name,
       newAmount: Number((plan.amount + ((plan.percentage / currentPercentage) * totalAmountToAdd)).toFixed(2))
-    }))
+    }));
 
   }
-
-
+  // Function to calculate new amounts for each goal based on the input amount
+  function calculateGoalAmounts(totalAmountToAdd: Float) {
+    if (goals.length === 0) return [];
+    const amountPerGoal = totalAmountToAdd / goals.length;
+    return goals.map(goal => ({
+      id: goal.id,
+      newAmount: Number((goal.amount + amountPerGoal).toFixed(2))
+    }));
+  }
 
   // Function on called when the user inputs an amount to budget and presses the send button
   async function handleInputAmount() {
@@ -86,25 +94,50 @@ export default function Layout() {
 
     const planAmounts = calculatePlanAmounts(parseFloat(amount));
 
-    const {success: updateSuccess, message: updateMessage} = await updatePlanAmounts(planAmounts);
+    const {success: updatePlanSuccess, message: updatePlanMessage} = await updatePlanAmounts(planAmounts);
  
-    if (updateSuccess) {
+
+    if (updatePlanSuccess) {
       Toast.show({
         type: 'success',
         text1: 'Plan Amounts updated successfully',
-        text2: updateMessage,
+        text2: updatePlanMessage,
         position: 'bottom'
       });
       setAmount(''); // Clear the input field
+
+
     } else {
       Toast.show({
         type: 'error',
         text1: 'Error updating plan amounts',
-        text2: updateMessage,
+        text2: updatePlanMessage,
         position: 'bottom'
       });
     }
 
+
+    const goalAmountGotten = planAmounts.find(plan => plan.name === "Goals")?.newAmount;
+    console.log('Goal Amount Gotten:', goalAmountGotten);
+    const goalAmounts = calculateGoalAmounts(goalAmountGotten || 0);
+
+    const { success: updateGoalSuccess, message: updateGoalMessage } = await updateGoalAmounts(goalAmounts);
+
+    if (updateGoalSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: 'Goal Amounts updated successfully',
+        text2: updateGoalMessage,
+        position: 'bottom'
+      });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Error updating goal amounts',
+        text2: updateGoalMessage,
+        position: 'bottom'
+      });
+    }
   }
 
 
@@ -199,7 +232,7 @@ export default function Layout() {
             <GoalCard
               key={goal.id}
               title={goal.name}
-              currentAmount={goal.current_amount}
+              currentAmount={goal.amount}
               targetAmount={goal.target_amount}
               onOptionsPress={() => {
                 setEditingGoal(goal);
@@ -227,7 +260,7 @@ export default function Layout() {
       {/* Total Amount and Add Plan/Goal Button */}
       <View className='flex-row items-center justify-between px-4 py-4 bg-white border-gray-200'>
         <Text className='text-2xl font-manrope-semibold text-text_strong'>
-          Total: ${activeTab === 'plans' ? currentTotalAmount.toString() : currentGoalAmount.toString()}
+          Total: ${currentTotalAmount.toFixed(2)}
         </Text>
         <TouchableOpacity
           className='flex-row bg-brand rounded-lg px-4 py-2'
@@ -235,7 +268,7 @@ export default function Layout() {
             if (activeTab === 'plans') {
               router.push({ pathname: '/add_plan', params: { currentPercentage: currentPercentage } });
             } else {
-              router.push('/add_goal/index');
+              router.push('/add_goal');
             }
           }}
         >

@@ -16,7 +16,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ title, currentAmount, targetAmount,
   return (
     <View className="bg-white rounded-xl p-4 mx-3 mb-3 shadow-sm border border-gray-100">
       {/* Header with title and options */}
-      <View className="flex-row justify-between items-center mb-3">
+      <View className="flex-row justify-between items-center mb-4 ">
         <Text className="text-xl font-manrope-semibold text-text_strong">{title}</Text>
         <TouchableOpacity onPress={onOptionsPress} className="p-1">
           <Feather name="more-vertical" size={20} color="#667039" />
@@ -41,23 +41,18 @@ const GoalCard: React.FC<GoalCardProps> = ({ title, currentAmount, targetAmount,
         <View>
           <Text className="text-sm font-manrope-regular text-gray-600">Current</Text>
           <Text className="text-lg font-manrope-semibold text-text_strong">
-            ${currentAmount.toFixed(2)}
+            ${currentAmount}
           </Text>
         </View>
         <View className="items-end">
           <Text className="text-sm font-manrope-regular text-gray-600">Target</Text>
           <Text className="text-lg font-manrope-semibold text-brand">
-            ${targetAmount.toFixed(2)}
+            ${targetAmount}
           </Text>
         </View>
       </View>
 
-      {/* Remaining Amount */}
-      <View className="mt-3 pt-3 border-t border-gray-100">
-        <Text className="text-sm font-manrope-regular text-gray-600 text-center">
-          ${Math.max(targetAmount - currentAmount, 0).toFixed(2)} remaining to reach goal
-        </Text>
-      </View>
+     
     </View>
   );
 };

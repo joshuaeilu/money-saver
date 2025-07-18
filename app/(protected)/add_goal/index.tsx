@@ -9,58 +9,44 @@ export default function AddGoal() {
   const router = useRouter();
   const [goalName, setGoalName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
+  const [goalPercentage, setGoalPercentage] = useState('');
 
   const handleAddGoal = async () => {
-    if (!goalName.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: 'Goal Name Required',
-        text2: 'Please enter a goal name',
-        position: 'bottom'
-      });
-      return;
-    }
+
+
+
+   
 
     if (!targetAmount.trim() || isNaN(parseFloat(targetAmount)) || parseFloat(targetAmount) <= 0) {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Target Amount',
-        text2: 'Please enter a valid target amount greater than 0',
-        position: 'bottom'
-      });
+      alert('Please fill in all the fields with valid values.');
       return;
     }
 
     const result = await addGoal(goalName.trim(), parseFloat(targetAmount));
 
     if (result.success) {
-      Toast.show({
-        type: 'success',
-        text1: 'Goal Created',
-        text2: `${goalName} goal has been created successfully`,
-        position: 'bottom'
-      });
-      router.back();
+      router.dismiss();
     } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Error Creating Goal',
-        text2: result.message,
-        position: 'bottom'
-      });
+      alert('Error creating goal: ' + result.message);
     }
   };
 
   return (
     <View className="flex-1 bg-white p-4">
       {/* Header */}
-      <View className="flex-row items-center justify-between mb-6 mt-4">
-        <TouchableOpacity onPress={() => router.back()}>
+      <View className="relative items-center justify-center mb-6 mt-4">
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="absolute left-0"
+        >
           <Feather name="arrow-left" size={24} color="#667039" />
         </TouchableOpacity>
+
+        {/* Centered Title */}
         <Text className="text-2xl font-manrope-bold text-text_strong">Add New Goal</Text>
-        <View style={{ width: 24 }} /> {/* Spacer for centering */}
       </View>
+
 
       {/* Goal Name Input */}
       <View className="mb-6">
@@ -73,6 +59,21 @@ export default function AddGoal() {
           placeholderTextColor="#999"
         />
       </View>
+
+      {/* Goal Percentage Input */}
+      <View className="mb-6">
+        <Text className="text-lg font-manrope-semibold text-text_strong mb-3">Goal Percentage</Text>
+        <TextInput
+          value={goalPercentage}
+          onChangeText={setGoalPercentage}
+          placeholder="e.g., 20%"
+          className="border border-gray-300 rounded-lg px-4 py-4 text-text_strong font-manrope-regular text-base"
+          placeholderTextColor="#999"
+          keyboardType="numeric"
+        />
+      </View>
+
+      <Toast/>
 
       {/* Target Amount Input */}
       <View className="mb-8">
@@ -94,7 +95,7 @@ export default function AddGoal() {
           <View className="ml-3 flex-1">
             <Text className="font-manrope-semibold text-blue-800 mb-1">About Goals</Text>
             <Text className="font-manrope-regular text-blue-700 text-sm leading-5">
-              Goals help you save for specific targets. You can manually add money to your goals 
+              Goals help you save for specific targets. You can manually add money to your goals
               or allocate a portion of your budget to them.
             </Text>
           </View>
@@ -110,7 +111,6 @@ export default function AddGoal() {
         <Text className="text-white font-manrope-semibold text-lg ml-2">Create Goal</Text>
       </TouchableOpacity>
 
-      <Toast />
     </View>
   );
 }
